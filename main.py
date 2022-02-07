@@ -8,9 +8,10 @@ global tweepy_api
 
 def keyboardInterruptHandler(signal, frame):
 	try:
-    	tweepy_api.update_profile(name=user_name)
-    except:
-    exit(0)
+		tweepy_api.update_profile(name=user_name)
+		exit(0)
+	except:
+		exit(0)
 
 signal.signal(signal.SIGINT, keyboardInterruptHandler)
 
