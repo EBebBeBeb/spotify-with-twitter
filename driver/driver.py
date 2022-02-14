@@ -1,5 +1,6 @@
 import tweepy
 import spotipy
+from spotipy import oauth2
 from spotipy.oauth2 import SpotifyOAuth
 import spotipy.util as util
 import json
@@ -48,6 +49,14 @@ def update_tweepy_access_token(ACCESS_TOKEN,ACCESS_TOKEN_SECRET):
 	    json.dump(data, raw, indent=4)
 	    raw.truncate()
 
+def update_spotipy_access_token(NAME,SPOTIPY_TOKEN):
+	with open("./credentials.json",'r+') as raw:
+		data = json.load(raw)
+		data["USERS"][NAME]["SPOTIPY_TOKEN"] = SPOTIPY_TOKEN 
+		raw.seek(0)
+		json.dump(data, raw, indent=4)
+		raw.truncate()
+
 def get_spotipy_credentials():
 	with open("./credentials.json",'r') as raw:
 		data = json.load(raw)
@@ -68,3 +77,9 @@ def get_user_list():
 	with open("./credentials.json",'r') as raw:
 		data = json.load(raw)
 	return data["USERS"]
+
+def spotipy_oauth2_client(name):
+	path = './driver/.cache-'+name
+	scope = "user-read-playback-state"
+	SPOTIPY_REDIRECT_URI,SPOTIPY_CLIENT_ID,SPOTIPY_CLIENT_SECRET = get_spotipy_credentials()
+	return oauth2.SpotifyOAuth( SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,SPOTIPY_REDIRECT_URI,scope=scope,cache_path=path)
