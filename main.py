@@ -63,11 +63,18 @@ while(1):
 			current_play = spotipy_client[i].current_playback()
 		except spotipy.client.SpotifyException:
 			print("Token_expired")
-			token_info = spotipy_oauth2_client_list[i].get_cached_token()
-			token_info = spotipy_oauth2_client_list[i].refresh_access_token(token_info['refresh_token'])
-			access_token = token_info['access_token']
-			update_spotipy_access_token(user_name_list[i],access_token)
-			spotipy_client[i] = new_spotipy_client(access_token)
+			try:
+				token_info = spotipy_oauth2_client_list[i].get_cached_token()
+				token_info = spotipy_oauth2_client_list[i].refresh_access_token(token_info['refresh_token'])
+				access_token = token_info['access_token']
+				update_spotipy_access_token(user_name_list[i],access_token)
+				spotipy_client[i] = new_spotipy_client(access_token)
+			except:
+				token_info = spotipy_oauth2_client_list[i].get_cached_token()
+				token_info = spotipy_oauth2_client_list[i].refresh_access_token(token_info['refresh_token'])
+				access_token = token_info['access_token']
+				update_spotipy_access_token(user_name_list[i],access_token)
+				spotipy_client[i] = new_spotipy_client(access_token)
 			current_play = spotipy_client[i].current_playback()
 		try:
 			current_track_name = current_play["item"]["name"]
