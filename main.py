@@ -54,11 +54,14 @@ previous_name = [""+str(i) for i in range(len(twitter_user_name_list))]
 
 while(1):
 	for i in range(len(twitter_user_name_list)):
-		screen_name = tweepy_api[i].get_settings()["screen_name"]
-		print(screen_name)
-		user_data=tweepy_api[i].get_user(screen_name=screen_name)
-		user_name = user_data._json["name"].split("🎵")[0]
-		print(user_name)
+		try:
+			screen_name = tweepy_api[i].get_settings()["screen_name"]
+			print(screen_name)
+			user_data=tweepy_api[i].get_user(screen_name=screen_name)
+			user_name = user_data._json["name"].split("🎵")[0]
+			print(user_name)
+		except:
+			continue		
 		try:
 			current_play = spotipy_client[i].current_playback()
 		except spotipy.client.SpotifyException:
@@ -70,12 +73,13 @@ while(1):
 				update_spotipy_access_token(user_name_list[i],access_token)
 				spotipy_client[i] = new_spotipy_client(access_token)
 			except:
-				token_info = spotipy_oauth2_client_list[i].get_cached_token()
-				token_info = spotipy_oauth2_client_list[i].refresh_access_token(token_info['refresh_token'])
-				access_token = token_info['access_token']
-				update_spotipy_access_token(user_name_list[i],access_token)
-				spotipy_client[i] = new_spotipy_client(access_token)
-			current_play = spotipy_client[i].current_playback()
+				continue
+			try:
+				current_play = spotipy_client[i].current_playback()
+			except:
+				continue
+		except:
+			continue
 		try:
 			current_track_name = current_play["item"]["name"]
 			current_track_artist_list = current_play["item"]["artists"]
